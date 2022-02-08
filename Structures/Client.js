@@ -4,8 +4,6 @@ const contextMenu = require("./ContextCommand");
 const slashCommand = require("./SlashCommand");
 const Utils = require("./Utils");
 
-const Economy = require("./Databases/Economy")
-
 class client extends Client {
   constructor() {
     super({
