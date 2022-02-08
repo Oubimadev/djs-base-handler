@@ -1,0 +1,5 @@
+{
+    "token": "Token Here",
+    "prefix": "Prefix Here",
+    "mongooseConnectionString": ""
+}
