@@ -59,8 +59,3 @@ module.exports = new Command({
     message.reply({ embeds: [serverEmbed] })
   },
 });
-/**
- * https://nhentai.net/g/391157/
- * https://nhentai.net/g/391152/
- * https://nhentai.net/g/391053/
- */

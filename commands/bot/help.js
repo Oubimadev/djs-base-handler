@@ -70,6 +70,13 @@ module.exports = new Command({
         client.commands.get(args[0].toLowerCase()) ||
         client.commands.get(client.aliases.get(args[0].toLowerCase()));
 
+      if (!cmd) {
+        const notACommand = new MessageEmbed()
+          .setDescription(`\`${args[0]}\` is not a valid command use \`${prefix}help\` to view all of my commands`)
+          .setColor("RED")
+        message.reply({ embeds: [notACommand] })
+      }
+
       const CommandInfo = new MessageEmbed()
         .setTitle(`${cmd.name} info`)
         .setDescription(`>>> 

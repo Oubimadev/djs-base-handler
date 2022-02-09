@@ -39,7 +39,7 @@ client.on("messageCreate", async (message) => {
     return message.channel.send({ embeds: [userPermission] })
   }
 
-  if (command.devOnly == true && message.author.id !== "933220177636626502") {
+  if (command.devOnly == true && !["Your ID"].includes(message.author.id)) {
     const devOnlyCommand = new Discord.MessageEmbed()
       .setTitle("Developer Only Command")
       .setDescription(`❌ | This command is only for the developer`)
@@ -48,17 +48,17 @@ client.on("messageCreate", async (message) => {
       return message.reply({ embeds: [devOnlyCommand] })
   }
 
-  if (command.guildOnly == true && message.guildId !== "855814357904916492") {
+  if (command.guildOnly == true && message.guildId !== "") {
     const guildOnlyCommand = new Discord.MessageEmbed()
       .setTitle("Guild Only Command")
-      .setDescription(`❌ | This command is only for \`${client.guilds.cache.get("855814357904916492").name}\` server`)
+      .setDescription(`❌ | This command is only for \`${client.guilds.cache.get("").name}\` server`)
       .setColor("")
       .setTimestamp()
       .setColor("")
     return message.reply({ embeds: [guildOnlyCommand] })
   }
 
-  if (command.inDevelopment == true && message.author.id !== "933220177636626502") {
+  if (command.inDevelopment == true && !["Your ID"].includes(message.author.id)) {
     const inDevelopment = new Discord.MessageEmbed()
       .setTitle("Command In Development")
       .setDescription(`❌ | ${command.name} is still in development. Stay Tuned`)
