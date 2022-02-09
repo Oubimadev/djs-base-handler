@@ -1,5 +1,5 @@
+const DirEmojis = require("../../Emojis/SlashCommandDirEmojis");
 const SlashCommand = require("../../Structures/slashCommand");
-const DirEmojis = require("../../Emojis/Diremojis");
 const { MessageEmbed } = require("discord.js");
 const { readdirSync } = require("fs");
 
@@ -70,6 +70,13 @@ module.exports = new SlashCommand({
     } else {
       const cmd =
         client.slashCommands.get(command.toLowerCase())
+
+        if (!cmd) {
+          const notACommand = new MessageEmbed()
+            .setDescription(`\`/${command}\` is not a command \`/help\` to view all the slash commands.`)
+            .setColor("RED")
+          interaction.reply({ content: [notACommand], ephemeral: true })
+        }
 
       const CommandInfo = new MessageEmbed()
         .setTitle(`${cmd.name} info`)
