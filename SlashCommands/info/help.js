@@ -6,15 +6,17 @@ const { readdirSync } = require("fs");
 module.exports = new SlashCommand({
   name: "help",
   description: "Help Command",
-  options: [{ 
-    name: "cmd",
-    description: "Get this command information",
-    type: "STRING",
-    required: false
-  }],
+  options: [
+    {
+      name: "cmd",
+      description: "Get this command information",
+      type: "STRING",
+      required: false,
+    },
+  ],
   type: "CHAT_INPUT",
   run: async ({ args, interaction, client }) => {
-    const command = interaction.options.getString("cmd")
+    const command = interaction.options.getString("cmd");
     if (!command) {
       let categories = [];
       const ignoredCategories = []; // categories to exclude.
@@ -68,15 +70,16 @@ module.exports = new SlashCommand({
         .setColor("RANDOM");
       return interaction.reply({ embeds: [embed] });
     } else {
-      const cmd =
-        client.slashCommands.get(command.toLowerCase())
+      const cmd = client.slashCommands.get(command.toLowerCase());
 
-        if (!cmd) {
-          const notACommand = new MessageEmbed()
-            .setDescription(`\`/${command}\` is not a command \`/help\` to view all the slash commands.`)
-            .setColor("RED")
-          interaction.reply({ content: [notACommand], ephemeral: true })
-        }
+      if (!cmd) {
+        const notACommand = new MessageEmbed()
+          .setDescription(
+            `\`/${command}\` is not a command \`/help\` to view all the slash commands.`
+          )
+          .setColor("RED");
+        interaction.reply({ content: [notACommand], ephemeral: true });
+      }
 
       const CommandInfo = new MessageEmbed()
         .setTitle(`${cmd.name} info`)
@@ -98,7 +101,7 @@ module.exports = new SlashCommand({
         )
         .setColor("RANDOM")
         .setTimestamp();
-      interaction.reply({ embeds: [CommandInfo] });
+      interaction.followUp({ embeds: [CommandInfo] });
     }
   },
 });

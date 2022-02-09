@@ -48,6 +48,6 @@ module.exports = new SlashCommand({
       **Answers:** \`${answer}\`
       `)
       .setColor("RANDOM")
-    interaction.reply({ embeds: [embed] })
+    interaction.followUp({ embeds: [embed] })
   },
 });
