@@ -1,86 +1,90 @@
 const client = require("./Client");
+const { readdirSync } = require("fs");
+const ascii = require("ascii-table");
 const { glob } = require("glob");
 const { promisify } = require("util");
 const globPromise = promisify(glob);
-const ascii = require('ascii-table');
-const { mongooseConnectionString } = require("./Data/config.json");
-const { default: chalk } = require("chalk");
 const mongoose = require("mongoose");
+const { default: chalk } = require("chalk");
 
-
-class Utils {
+class Util {
   /**
-   * @param {client} client
+   * @param {client} client 
    */
-  constructor(client) {
-    this.client = client;
+  constructor (client) {
+    this.client = client
   }
-  async startClient() {
-    this.client.login(this.client.config.token);
-    let table = new ascii("Commands")
-    table.setHeading("Command", "Load Status");
-    const commands = await globPromise(`${process.cwd()}/Commands/**/*.js`);
-    commands.map((value) => {
-      const file = require(value);
-      const splitted = value.split("/");
-      const directory = splitted[splitted.length - 2];
 
-      if (file.name) {
-        const properties = { directory, ...file };
-        this.client.commands.set(file.name, properties);
-        table.addRow(`${file.name}`, '✅ Normal Command Loaded')
-      } else table.addRow(`${file.name || "Missing"}`, `❌ Command name is not a string or empty ${splitted[6] + "/" + splitted[7]}`)
-      if (file.aliases && Array.isArray(file.aliases)) {
-        file.aliases.forEach((alias) =>
-          this.client.aliases.set(alias, file.name)
-        );
+  async startClient() {
+    this.client.login(this.client.config.token)
+
+    let table = new ascii("Command Load Status");
+    table.setHeading("Commands", "Load Status");
+
+    readdirSync("./commands/").forEach((dir) => {
+      const commands = readdirSync(`./commands/${dir}/`).filter((file) =>
+        file.endsWith(".js")
+      );
+      for (let file of commands) {
+        let pull = require(`../commands/${dir}/${file}`);
+        if (pull.name) {
+          this.client.commands.set(pull.name, pull);
+          table.addRow(file, `✅ Loaded Properly (Normal Command)`)
+        } else {
+          table.addRow(`${file || "Missing"}`, '❌ -> Missing a name, or name is not a string.')
+          continue;
+        } if (pull.aliases && Array.isArray(pull.aliases))
+          pull.aliases.forEach((alias) => this.client.aliases.set(alias, pull.name));
       }
     });
 
-    const eventFiles = await globPromise(`${process.cwd()}/Events/*.js`);
-    eventFiles.map((value) => require(value));
+    readdirSync("./events/").forEach((file) => {
+      const events = readdirSync("./events/").filter((file) =>
+        file.endsWith(".js")
+      );
+  
+      for (let file of events) {
+        let pull = require(`../events/${file}`);
+  
+        if (pull.name) {
+          this.client.events.set(pull.name, pull);
+        } else {
+          continue;
+        }
+      }
+    });
 
-    // Slash Commands
     const slashCommands = await globPromise(
-      `${process.cwd()}/SlashCommands/**/*.js`
+      `${__dirname}/../SlashCommands/**/*.js`
     );
-
+  
     const arrayOfSlashCommands = [];
     slashCommands.map((value) => {
       const file = require(value);
-      const splitted = value.split("/")
       if (file.name) {
-        table.addRow(`${file.name}`, `✅ Slash Command Loaded.`)
+        table.addRow(file.name, "✅ Loaded Properly (Slash Command)")
       } else if (!file?.name) {
-        table.addRow(`${file.name || "MISSING"}`, `❌ Slash Command name is not a string or empty ${splitted[6] + "/" + splitted[7]}`)
+        table.addRow(`${file.name || "Missing"}`, "❌ -> Missing a name, or name is not a string.")
       }
       this.client.slashCommands.set(file.name, file);
-
+  
       if (["MESSAGE", "USER"].includes(file.type)) delete file.description;
       arrayOfSlashCommands.push(file);
     });
     
     this.client.on("ready", async () => {
-      // Register for a single guild
-      // await this.client.guilds.cache.get("server id").commands.set(arrayOfSlashCommands).then(() => {
-      //   console.log(`Loaded all slash commands to ${this.client.guilds.cache.get("855814357904916492").name}`)
-      // }); // server only slash command
-
-      // Register for all the guilds the bot is in
       await this.client.application.commands.set(arrayOfSlashCommands).then(() => {
         console.log("Loaded global commands")
-      }); // Global slash command
-  });
-
-    console.clear()
+      });
+    });
     console.log(table.toString())
-    if (!mongooseConnectionString) return
 
-    mongoose.connect(mongooseConnectionString);
-    mongoose.connection.on("connected", () =>console.log(chalk.green.bold("Connected to the database.")))
-    mongoose.connection.on("disconnected", () =>console.log(chalk.red.bold("Disconnected from the database.")))
-    mongoose.connection.on("error", (error) => console.log(chalk.red.bold(`There was an error connecting to the database.\nError: ${error}`)))
+    if (!this.client.config.mongooseConnectionString) return
+
+    mongoose.connect(this.client.config.mongooseConnectionString);
+    mongoose.connection.on("connected", () =>console.log(chalk.green("Connected to the database.")))
+    mongoose.connection.on("disconnected", () =>console.log(chalk.red("Disconnected from the database.")))
+    mongoose.connection.on("error", (error) => console.log(chalk.red(`There was an error connecting to the database.\nError: ${error}`)))
   }
 }
-
-module.exports = Utils;
+module.exports = Util

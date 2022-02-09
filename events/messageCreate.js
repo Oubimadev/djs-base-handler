@@ -48,13 +48,12 @@ client.on("messageCreate", async (message) => {
       return message.reply({ embeds: [devOnlyCommand] })
   }
 
-  if (command.guildOnly == true && message.guildId !== "") {
+  if (command.guildOnly == true && message.guildId !== "Server ID") {
     const guildOnlyCommand = new Discord.MessageEmbed()
       .setTitle("Guild Only Command")
-      .setDescription(`❌ | This command is only for \`${client.guilds.cache.get("").name}\` server`)
+      .setDescription(`❌ | This command is only for \`${client.guilds.cache.get("Server ID").name}\` server`)
       .setColor("")
       .setTimestamp()
-      .setColor("")
     return message.reply({ embeds: [guildOnlyCommand] })
   }
 
@@ -65,12 +64,6 @@ client.on("messageCreate", async (message) => {
       .setColor("RED")
       .setTimestamp()
     return message.reply({ embeds: [inDevelopment] })
-  }
-
-  if (command.category === "economy") {
-    let data = await client.economy.getUser(message.author.id)
-    data.commandsRan += 1
-    await data.save()
   }
 
   await command.run({ client, message, args });
