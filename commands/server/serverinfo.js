@@ -28,7 +28,6 @@ module.exports = new Command({
       **Stage Channels:** \`${guild.channels.cache.filter((ch) => ch.type === "GUILD_STAGE_VOICE").size.toLocaleString()}\`
       **Voice Channels:** \`${guild.channels.cache.filter((ch) => ch.type === "GUILD_VOICE").size.toLocaleString()}\`
       **Text Channels:** \`${guild.channels.cache.filter((ch) => ch.type === "GUILD_TEXT").size.toLocaleString()}\`
-      **AFK Channel:** \`${guild.afkChannel.name}\`
       \u3000
       `)
       .addField("Members", `
@@ -58,9 +57,4 @@ module.exports = new Command({
       .setFooter({ text: `Requested by: ${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: true }) })
     message.reply({ embeds: [serverEmbed] })
   },
-});
-/**
- * https://nhentai.net/g/391157/
- * https://nhentai.net/g/391152/
- * https://nhentai.net/g/391053/
- */
+})
