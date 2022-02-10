@@ -1,5 +1,5 @@
 const DirEmojis = require("../../Emojis/SlashCommandDirEmojis");
-const SlashCommand = require("../../Structures/slashCommand");
+const SlashCommand = require("../../Structures/SlashCommand");
 const { MessageEmbed } = require("discord.js");
 const { readdirSync } = require("fs");
 

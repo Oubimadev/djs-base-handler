@@ -1,4 +1,4 @@
-const SlashCommand = require("../../Structures/slashCommand");
+const SlashCommand = require("../../Structures/SlashCommand");
 const ms = require('ms');
 
 module.exports = new SlashCommand({

@@ -1,5 +1,4 @@
 const SlashCommand = require("../../Structures/SlashCommand");
-const { MessageEmbed } = require("discord.js");
 const ms = require("ms");
 
 module.exports = new SlashCommand({
