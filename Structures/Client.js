@@ -8,7 +8,9 @@ class client extends Client {
   constructor() {
     super({
       intents: 32767,
-      partials: ["CHANNEL", "GUILD_MEMBER", "MESSAGE", "REACTION", "USER"],
+      allowedMentions: {
+        parse: ["users", "roles", "everyone"],
+      }
     });
 
     /**
