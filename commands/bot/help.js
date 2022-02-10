@@ -1,5 +1,5 @@
 const Command = require("../../Structures/Command");
-const DirEmojis = require('../../Emojis/Diremojis');
+const DirEmojis = require('../../Emojis/DirEmojis');
 const { MessageEmbed } = require("discord.js");
 const { readdirSync } = require('fs');
 
@@ -74,7 +74,7 @@ module.exports = new Command({
         const notACommand = new MessageEmbed()
           .setDescription(`\`${args[0]}\` is not a valid command use \`${prefix}help\` to view all of my commands`)
           .setColor("RED")
-        message.reply({ embeds: [notACommand] })
+        return message.reply({ embeds: [notACommand] })
       }
 
       const CommandInfo = new MessageEmbed()
