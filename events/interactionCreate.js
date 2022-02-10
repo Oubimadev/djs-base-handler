@@ -28,7 +28,7 @@ client.on("interactionCreate", async (interaction) => {
         .setColor("RED")
         .setDescription(`❌ | You are missing [\`${cmd.userPermissions.join(", ").replace(/\_/g, " ")}\`] permissions`)
         .setTimestamp()
-      return interaction.reply({ embeds: [notPermissions] })
+      return interaction.followUp({ embeds: [notPermissions] })
     }
 
     if (!interaction.guild.me.permissions.has(cmd.botPermissions || [])) {
@@ -37,7 +37,7 @@ client.on("interactionCreate", async (interaction) => {
         .setColor("RED")
         .setDescription(`❌ | I am missing [\`${cmd.botPermissions.join(", ").replace(/\_/g, " ")}\`] permissions`)
         .setTimestamp()
-      return interaction.reply({ embeds: [notPermissions] })
+      return interaction.followUp({ embeds: [notPermissions] })
     }
 
     cmd.run({ client, interaction, args });
