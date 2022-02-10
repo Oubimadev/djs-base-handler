@@ -5,6 +5,8 @@ module.exports = new Command({
   description: "Send client websocket ping",
   category: "bot",
   run: async ({ client, message }) => {
-    message.channel.send({ content: `**Websocket Ping:** \`${Math.round(client.ws.ping).toLocaleString()}ms\`` })
+    const msg = await message.channel.send({ content: "Pinging. . ." })
+    message.channel.send({content: `**Websocket Ping:** \`${Math.round(client.ws.ping).toLocaleString()}ms\`\n**Message:** \`${Math.round(msg.createdTimestamp - message.createdTimestamp).toLocaleString()}ms\``,
+    });
   },
 });
