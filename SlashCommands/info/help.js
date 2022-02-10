@@ -68,7 +68,7 @@ module.exports = new SlashCommand({
         })
         .setTimestamp()
         .setColor("RANDOM");
-      return interaction.reply({ embeds: [embed] });
+      return interaction.followUp({ embeds: [embed] });
     } else {
       const cmd = client.slashCommands.get(command.toLowerCase());
 
@@ -78,7 +78,7 @@ module.exports = new SlashCommand({
             `\`/${command}\` is not a command \`/help\` to view all the slash commands.`
           )
           .setColor("RED");
-        interaction.reply({ content: [notACommand], ephemeral: true });
+        interaction.followUp({ content: [notACommand], ephemeral: true });
       }
 
       const CommandInfo = new MessageEmbed()
