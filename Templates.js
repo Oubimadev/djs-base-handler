@@ -42,3 +42,8 @@ module.exports = new SlashContextCommand({
   userPermissions: [], // Command Userpermissions
   run: async ({}) => {}, // Running the command - ({ client, interaction })
 });
+
+/** 
+ *  ⚠️ Do not use interaction.followUp it will cause an error
+ *  Just do  interaction.reply()
+ */

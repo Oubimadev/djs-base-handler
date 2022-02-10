@@ -15,7 +15,7 @@ module.exports = new SlashCommand({
     },
   ],
   type: "CHAT_INPUT",
-  run: async ({ args, interaction, client }) => {
+  run: async ({ interaction, client }) => {
     const command = interaction.options.getString("cmd");
     if (!command) {
       let categories = [];
@@ -68,7 +68,7 @@ module.exports = new SlashCommand({
         })
         .setTimestamp()
         .setColor("RANDOM");
-      return interaction.followUp({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed] });
     } else {
       const cmd = client.slashCommands.get(command.toLowerCase());
 
@@ -78,7 +78,7 @@ module.exports = new SlashCommand({
             `\`/${command}\` is not a command \`/help\` to view all the slash commands.`
           )
           .setColor("RED");
-        interaction.followUp({ content: [notACommand], ephemeral: true });
+        return interaction.reply({ embeds: [notACommand], ephemeral: true });
       }
 
       const CommandInfo = new MessageEmbed()
@@ -101,7 +101,7 @@ module.exports = new SlashCommand({
         )
         .setColor("RANDOM")
         .setTimestamp();
-      interaction.followUp({ embeds: [CommandInfo] });
+      return interaction.reply({ embeds: [CommandInfo] });
     }
   },
 });

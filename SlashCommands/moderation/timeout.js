@@ -34,9 +34,9 @@ module.exports = new SlashCommand({
     let member = interaction.guild.members.cache.get(user.id)
 
     const timeinms = ms(time)
-    if (!timeinms) return interaction.followUp({ content: "How long will you timeout this user?", ephemeral: true })
+    if (!timeinms) return interaction.reply({ content: "How long will you timeout this user?" })
 
     member.timeout(timeinms, reason)
-    interaction.followUp({ content: `${member} has been timed out for \`${time}\` (${reason})` })
+    interaction.reply({ content: `${member} has been timed out for \`${time}\` (${reason})` })
   },
 });

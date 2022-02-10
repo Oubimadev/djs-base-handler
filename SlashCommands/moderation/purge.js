@@ -21,8 +21,9 @@ module.exports = new SlashCommand({
     const filtered = messages.filter((msg) => Date.now() - msg.createdTimestamp < ms('14 days'));
 
     await interaction.channel.bulkDelete(filtered)
-    await interaction.followUp({ content: `✅ Cleared \`${amount}\` messages that has been sent over the past 14 days` }).then((msg) => {
-      setTimeout(() => msg.delete(), ms('5s'))
-    })
+    const msg = await interaction.channel.send({ content: `✅ Cleared \`${amount}\` messages that has been sent over the past 14 days` })
+    setTimeout(() => {
+      msg.delete()
+    }, ms('5 seconds'))
   },
 });

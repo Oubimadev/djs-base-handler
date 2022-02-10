@@ -1,5 +1,4 @@
 const client = require("./Client");
-const { readdirSync } = require("fs");
 const ascii = require("ascii-table");
 const { glob } = require("glob");
 const { promisify } = require("util");
@@ -21,43 +20,29 @@ class Util {
     let table = new ascii("Command Load Status");
     table.setHeading("Commands", "Load Status");
 
-    readdirSync("./commands/").forEach((dir) => {
-      const commands = readdirSync(`./commands/${dir}/`).filter((file) =>
-        file.endsWith(".js")
-      );
-      for (let file of commands) {
-        let pull = require(`../commands/${dir}/${file}`);
-        if (pull.name) {
-          client.commands.set(pull.name, pull);
-          table.addRow(file, "✅ Command Loaded");
-        } else {
-          table.addRow(
-            file,
-            "❌ -> Missing a command name, or command name is not a string."
-          );
-          continue;
-        }
-        if (pull.aliases && Array.isArray(pull.aliases))
-          pull.aliases.forEach((alias) => client.aliases.set(alias, pull.name));
+    
+    const commandFiles = await globPromise(`${__dirname}/../commands/**/*.js`);
+    commandFiles.map((value) => {
+      const file = require(value);
+      const splitted = value.split("/");
+      const directory = splitted[splitted.length - 2];
+
+      if (file.name) {
+        const properties = { directory, ...file };
+        this.client.commands.set(file.name, properties);
+        table.addRow(file.name, "✅ loaded");
+      } else {
+        table.addRow(`${file.name || "Missing"}`, "❌ Not loaded ");
       }
+      if (file.aliases && Array.isArray(file.aliases))
+        file.aliases.forEach((alias) =>
+          this.client.aliases.set(alias, file.name)
+        );
     });
 
     // Events
-    readdirSync("./events/").forEach((file) => {
-      const events = readdirSync("./events/").filter((file) =>
-        file.endsWith(".js")
-      );
-  
-      for (let file of events) {
-        let pull = require(`../events/${file}`);
-  
-        if (pull.name) {
-          client.events.set(pull.name, pull);
-        } else {
-          continue;
-        }
-      }
-    });
+    const eventFiles = await globPromise(`${__dirname}/../events/*.js`);
+    eventFiles.map((value) => require(value));
 
     const slashCommands = await globPromise(
       `${__dirname}/../SlashCommands/**/*.js`
@@ -67,7 +52,7 @@ class Util {
     slashCommands.map((value) => {
       const file = require(value);
       if (file.name) {
-        table.addRow(file.name, "✅ SlashCMD Loaded");
+        table.addRow(file.name, "✅ Loaded");
       } else if (!file?.name) {
         table.addRow(
           `${file.name || "Missing"}`,
@@ -81,11 +66,17 @@ class Util {
     });
 
     this.client.on("ready", async () => {
+      // await this.client.guilds.cache
+      // .get("Server ID Here")
+      // .commands.set(arrayOfSlashCommands).then(() => {
+      //   console.log(`Loaded command to ${this.client.guilds.cache.get("Server ID Here").name}`)
+      // });
+
       await this.client.application.commands
-        .set(arrayOfSlashCommands)
-        .then(() => {
-          console.log("Loaded global commands");
-        });
+      .set(arrayOfSlashCommands)
+      .then(() => {
+        console.log("Loaded global commands");
+      });
     });
     console.log(table.toString());
 
